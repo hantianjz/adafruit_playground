@@ -1,0 +1,29 @@
+config("cmsis_config") {
+  include_dirs = [ "CMSIS/Include" ]
+}
+
+static_library("cmsis") {
+  configs -= [ "//build:strict_warning" ]
+  configs += [ ":cmsis_config" ]
+  libs = [ "CMSIS/Lib/GCC/libarm_cortexM0l_math.a" ]
+}
+
+static_library("samd21") {
+  defines = [ "__SAMD21G18A__" ]
+  configs -= [ "//build:strict_warning" ]
+  configs += [ ":cmsis_config" ]
+  include_dirs = [
+    "samd21/include",
+    "samd21/source",
+  ]
+  sources = [
+    "samd21/source/gcc/startup_samd21.c",
+    "samd21/source/system_samd21.c",
+  ]
+  deps = [ ":cmsis" ]
+}
+
+executable("main") {
+  sources = [ "main.c" ]
+  deps = [ ":samd21" ]
+}
