@@ -9,4 +9,4 @@
 	url = git@github.com:arduino/ArduinoModule-CMSIS-Atmel.git
 [submodule "external/CMSIS"]
 	path = external/CMSIS
-	url = git@github.com:ARM-software/CMSIS.git
+	url = git@github.com:ARM-software/CMSIS_5.git
