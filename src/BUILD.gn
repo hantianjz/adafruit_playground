@@ -1,6 +1,6 @@
 _atmel_cmsis_dir = "//external/Atmel-CMSIS/CMSIS-Atmel/CMSIS/Device/ATMEL/"
 _samd_core_dir = "//external/ArduinoCore-samd/"
-_cmsis_dir = "//external/CMSIS/"
+_cmsis_dir = "//external/CMSIS_5/"
 
 config("atmel_cmsis_config") {
   include_dirs = [
@@ -13,7 +13,7 @@ config("arduino_samd_core_config") {
   include_dirs = [
     "${_samd_core_dir}/variants/circuitplay/",
     "${_samd_core_dir}/cores/arduino/",
-    "${_cmsis_dir}/CMSIS/Include/",
+    "${_cmsis_dir}/CMSIS/Core/Include/",
   ]
 }
 
@@ -25,7 +25,7 @@ source_set("arduino_samd_core") {
 
   # configs -= [ "//build:strict_warning" ]
   sources = [
-    "${_samd_core_dir}/bootloaders/zero/board_startup.c",
+    "${_samd_core_dir}/cores/arduino/cortex_handlers.c",
     "${_samd_core_dir}/cores/arduino/startup.c",
   ]
   configs += [
