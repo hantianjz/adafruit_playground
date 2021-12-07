@@ -1,0 +1,12 @@
+[submodule "external/cmsis_atmel"]
+	path = external/cmsis_atmel
+	url = git@github.com:arduino/ArduinoModule-CMSIS-Atmel.git
+[submodule "external/ArduinoCore-samd"]
+	path = external/ArduinoCore-samd
+	url = git@github.com:arduino/ArduinoCore-samd.git
+[submodule "external/Atmel-CMSIS"]
+	path = external/Atmel-CMSIS
+	url = git@github.com:arduino/ArduinoModule-CMSIS-Atmel.git
+[submodule "external/CMSIS"]
+	path = external/CMSIS
+	url = git@github.com:ARM-software/CMSIS.git

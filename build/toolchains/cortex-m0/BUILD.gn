@@ -41,11 +41,12 @@ toolchain("cortex-m0") {
     rspfile = "$outfile.rsp"
     rspfile_content = "{{inputs}} {{libs}}"
 
-    command = "${_cxx}  {{ldflags}} -Wl,--gc-sections -o $outfile -Wl,-Map=${mapfile} -Wl,--start-group @$rspfile -Wl,--end-group --specs=nosys.specs -lnosys ${_common_flags}"
+    command = "${_cxx} {{ldflags}} -Wl,--gc-sections -o $outfile -Wl,-Map=${mapfile} -Wl,--start-group @$rspfile -Wl,--end-group --specs=nosys.specs -lnosys -lc ${_common_flags}"
 
     description = "LINK $outfile"
     default_output_dir = "{{root_out_dir}}"
     outputs = [ outfile ]
+    default_output_extension = ".elf"
   }
 
   if (host_os == "win") {

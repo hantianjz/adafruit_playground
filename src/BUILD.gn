@@ -1,29 +1,48 @@
-config("cmsis_config") {
-  include_dirs = [ "CMSIS/Include" ]
-}
+_atmel_cmsis_dir = "//external/Atmel-CMSIS/CMSIS-Atmel/CMSIS/Device/ATMEL/"
+_samd_core_dir = "//external/ArduinoCore-samd/"
+_cmsis_dir = "//external/CMSIS/"
 
-static_library("cmsis") {
-  configs -= [ "//build:strict_warning" ]
-  configs += [ ":cmsis_config" ]
-  libs = [ "CMSIS/Lib/GCC/libarm_cortexM0l_math.a" ]
-}
-
-static_library("samd21") {
-  defines = [ "__SAMD21G18A__" ]
-  configs -= [ "//build:strict_warning" ]
-  configs += [ ":cmsis_config" ]
+config("atmel_cmsis_config") {
   include_dirs = [
-    "samd21/include",
-    "samd21/source",
+    "${_atmel_cmsis_dir}",
+    "${_atmel_cmsis_dir}/samd21/include",
   ]
+}
+
+config("arduino_samd_core_config") {
+  include_dirs = [
+    "${_samd_core_dir}/variants/circuitplay/",
+    "${_samd_core_dir}/cores/arduino/",
+    "${_cmsis_dir}/CMSIS/Include/",
+  ]
+}
+
+source_set("arduino_samd_core") {
+  defines = [
+    "CRYSTALLESS",
+    "__SAMD21G18A__",
+  ]
+
+  # configs -= [ "//build:strict_warning" ]
   sources = [
-    "samd21/source/gcc/startup_samd21.c",
-    "samd21/source/system_samd21.c",
+    "${_samd_core_dir}/bootloaders/zero/board_startup.c",
+    "${_samd_core_dir}/cores/arduino/startup.c",
   ]
-  deps = [ ":cmsis" ]
+  configs += [
+    ":arduino_samd_core_config",
+    ":atmel_cmsis_config",
+  ]
 }
 
 executable("main") {
+  _linker_script = rebase_path(
+          "${_samd_core_dir}/variants/circuitplay/linker_scripts/gcc/flash_with_bootloader.ld",
+          root_build_dir)
+  ldflags = [ "-T${_linker_script}" ]
   sources = [ "main.c" ]
-  deps = [ ":samd21" ]
+  configs += [
+    ":atmel_cmsis_config",
+    ":arduino_samd_core_config",
+  ]
+  deps = [ ":arduino_samd_core" ]
 }
