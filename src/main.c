@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "samd21g18a.h"
 
 #include "instance/port.h"
