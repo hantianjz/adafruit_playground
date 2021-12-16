@@ -1,3 +1,8 @@
+ARM_CMSIS_WORKSPACE = "//external/CMSIS_5"
+ATMEL_CMSIS_WORKSPACE = "//external/Atmel-CMSIS"
+ARDUINO_CORE_SAMD_WORKSPACE = "//external/ArduinoCore-samd"
+ARDUINO_CORE_API_WORKSPACE = "//external/ArduinoCore-API"
+
 if (target_os == "") {
   target_os = host_os
 }

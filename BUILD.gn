@@ -1,3 +1,5 @@
+_m0_arm_gcc = "//build/toolchains/cortex-m0"
+
 group("all") {
-  deps = [ "//src:main(//build/toolchains/cortex-m0)" ]
+  deps = [ "//src:blinky(${_m0_arm_gcc})" ]
 }

@@ -1,0 +1,5 @@
+assert(defined(ARM_CMSIS_WORKSPACE), "ARM CMSIS 5 Workspace must be defined.")
+
+config("arm_cmsis_core_config") {
+  include_dirs = [ "${ARM_CMSIS_WORKSPACE}/CMSIS/Core/Include/" ]
+}

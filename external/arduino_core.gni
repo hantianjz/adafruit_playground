@@ -1,0 +1,82 @@
+template("arduino_firmware") {
+  assert(defined(ARDUINO_CORE_SAMD_WORKSPACE),
+         "Arduino Core Workspace must be defined.")
+
+  _core_samd_dir = "${ARDUINO_CORE_SAMD_WORKSPACE}/cores/arduino/"
+  _core_api_dir = "${ARDUINO_CORE_API_WORKSPACE}/"
+
+  assert(defined(invoker.variant), "Arduino variant must be defined")
+
+  forward_variables_from(invoker, [ "variant" ])
+
+  _core_target = "_arduino_core_${variant}"
+  _core_target_config = "${_core_target}_config"
+
+  config(_core_target_config) {
+    defines = invoker.defines
+    include_dirs = [
+      _core_samd_dir,
+      _core_api_dir,
+      "${ARDUINO_CORE_SAMD_WORKSPACE}/variants/${variant}",
+    ]
+  }
+
+  _core_srcs = [
+    "${_core_samd_dir}/Reset.cpp",
+    "${_core_samd_dir}/SERCOM.cpp",
+    "${_core_samd_dir}/Tone.cpp",
+    "${_core_samd_dir}/Uart.cpp",
+    "${_core_samd_dir}/WInterrupts.c",
+    "${_core_samd_dir}/WMath.cpp",
+    "${_core_samd_dir}/abi.cpp",
+    "${_core_samd_dir}/cortex_handlers.c",
+    "${_core_samd_dir}/delay.c",
+    "${_core_samd_dir}/hooks.c",
+    "${_core_samd_dir}/itoa.c",
+    "${_core_samd_dir}/main.cpp",
+    "${_core_samd_dir}/new.cpp",
+    "${_core_samd_dir}/pulse.c",
+    "${_core_samd_dir}/pulse_asm.S",
+    "${_core_samd_dir}/startup.c",
+    "${_core_samd_dir}/wiring.c",
+    "${_core_samd_dir}/wiring_analog.c",
+    "${_core_samd_dir}/wiring_digital.c",
+    "${_core_samd_dir}/wiring_private.c",
+    "${_core_samd_dir}/wiring_shift.c",
+    "${ARDUINO_CORE_SAMD_WORKSPACE}/variants/${variant}/variant.cpp",
+    "${_core_samd_dir}/USB/CDC.cpp",
+    "${_core_samd_dir}/USB/USBCore.cpp",
+    "${_core_samd_dir}/USB/samd21_host.c",
+
+    "${_core_api_dir}/api/Print.cpp",
+    "${_core_api_dir}/api/Common.cpp",
+    "${_core_api_dir}/api/IPAddress.cpp",
+    "${_core_api_dir}/api/PluggableUSB.cpp",
+    "${_core_api_dir}/api/Stream.cpp",
+    "${_core_api_dir}/api/String.cpp",
+  ]
+
+  source_set(_core_target) {
+    sources = _core_srcs
+    configs += [ ":${_core_target_config}" ] + invoker.configs
+  }
+
+  _linker_script = rebase_path(
+          "${ARDUINO_CORE_SAMD_WORKSPACE}/variants/${variant}/linker_scripts/gcc/flash_with_bootloader.ld",
+          root_build_dir)
+
+  executable(target_name) {
+    ldflags = [ "-T${_linker_script}" ]
+    sources = invoker.sources
+
+    configs += [ ":${_core_target_config}" ]
+    if (defined(invoker.configs)) {
+      configs += invoker.configs
+    }
+
+    deps = [ ":${_core_target}" ]
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+  }
+}

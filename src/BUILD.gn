@@ -1,48 +1,29 @@
-_atmel_cmsis_dir = "//external/Atmel-CMSIS/CMSIS-Atmel/CMSIS/Device/ATMEL/"
-_samd_core_dir = "//external/ArduinoCore-samd/"
-_cmsis_dir = "//external/CMSIS_5/"
+import("//external/arduino_core.gni")
+import("//external/atmel_cmsis.gni")
 
-config("atmel_cmsis_config") {
-  include_dirs = [
-    "${_atmel_cmsis_dir}",
-    "${_atmel_cmsis_dir}/samd21/include",
-  ]
+atmel_cmsis_cfg("samd21_config") {
+  chip_family = "samd21"
 }
 
-config("arduino_samd_core_config") {
-  include_dirs = [
-    "${_samd_core_dir}/variants/circuitplay/",
-    "${_samd_core_dir}/cores/arduino/",
-    "${_cmsis_dir}/CMSIS/Core/Include/",
-  ]
-}
-
-source_set("arduino_samd_core") {
+arduino_firmware("blinky") {
+  variant = "circuitplay"
   defines = [
     "CRYSTALLESS",
     "__SAMD21G18A__",
+    "F_CPU=48000000L",
+    "ARDUINO=10602",
+    "ARDUINO_SAMD_ZERO",
+    "ARDUINO_ARCH_SAMD",
+    "USBCON",
+    "USB_VID=0x2341",
+    "USB_PID=0x004d",
+    "USB_MANUFACTURER=\"Arduino LLC\"",
+    "USB_PRODUCT=\"Arduino Zero\"",
+  ]
+  configs = [
+    ":samd21_config",
+    "//external:arm_cmsis_core_config",
   ]
 
-  # configs -= [ "//build:strict_warning" ]
-  sources = [
-    "${_samd_core_dir}/cores/arduino/cortex_handlers.c",
-    "${_samd_core_dir}/cores/arduino/startup.c",
-  ]
-  configs += [
-    ":arduino_samd_core_config",
-    ":atmel_cmsis_config",
-  ]
-}
-
-executable("main") {
-  _linker_script = rebase_path(
-          "${_samd_core_dir}/variants/circuitplay/linker_scripts/gcc/flash_with_bootloader.ld",
-          root_build_dir)
-  ldflags = [ "-T${_linker_script}" ]
   sources = [ "main.c" ]
-  configs += [
-    ":atmel_cmsis_config",
-    ":arduino_samd_core_config",
-  ]
-  deps = [ ":arduino_samd_core" ]
 }

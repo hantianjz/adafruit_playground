@@ -1,0 +1,26 @@
+template("atmel_cmsis_cfg") {
+  assert(defined(ATMEL_CMSIS_WORKSPACE),
+         "ATMEL CMSIS Workspace must be defined.")
+
+  forward_variables_from(invoker,
+                         "*",
+                         [
+                           "deps",
+                           "public_deps",
+                           "defines",
+                         ])
+
+  _cmsis_dir = "${ATMEL_CMSIS_WORKSPACE}/CMSIS-Atmel/CMSIS/Device/ATMEL/"
+
+  assert(defined(invoker.chip_family), "Ateml Chip family must be defined")
+
+  config(target_name) {
+    if (defined(invoker.defines)) {
+      defines = invoker.defines
+    }
+    include_dirs = [
+      _cmsis_dir,
+      "${_cmsis_dir}/${chip_family}/include",
+    ]
+  }
+}
